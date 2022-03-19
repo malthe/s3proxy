@@ -1,0 +1,19 @@
+[package]
+name = "s3proxy"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1"
+aws-sign-v4 = "0.1.1"
+chrono = "0.4"
+envy = "0.4"
+http = "0.2"
+hyper = { version = "0.14", features = ["http1", "client", "server"] }
+hyper-rustls = { version = "0.23.0", features = ["rustls-native-certs"] }
+log = "0.4"
+pretty_env_logger = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0.79"
+tokio = { version = "1", features = ["full"] }
+url = "2"
