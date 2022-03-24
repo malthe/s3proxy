@@ -14,6 +14,5 @@ hyper-rustls = { version = "0.23.0", features = ["rustls-native-certs"] }
 log = "0.4"
 pretty_env_logger = "0.4"
 serde = { version = "1", features = ["derive"] }
-serde_json = "1.0.79"
 tokio = { version = "1", features = ["full"] }
 url = "2"
