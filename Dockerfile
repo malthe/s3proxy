@@ -26,4 +26,3 @@ ENV RUST_LOG=info
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/s3proxy /usr/local/bin/app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 ENTRYPOINT ["/usr/local/bin/app"]
-EXPOSE 8080/tcp
