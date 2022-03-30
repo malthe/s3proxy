@@ -7,14 +7,15 @@ This is a service implemented in Rust that proxies HTTP requests to an AWS S3-co
 
 The service is configured using environment variables:
 
-| Name              | Description                                                     | Default      |
-|-------------------|-----------------------------------------------------------------|--------------|
-| BIND_ADDRESS      |                                                                 | 0.0.0.0:8080 |
-| RULES_PATH        | The file must exist if a value is set here.                     | rules.txt    |
-| S3_URL            | The AWS S3-compatible endpoint; this may include a path prefix. |              |
-| S3_ACCOUNT_KEY    |                                                                 |              |
-| S3_ACCOUNT_SECRET |                                                                 |              |
-| S3_REGION         |                                                                 |              |
+| Name              | Description                                                     | Default              |
+|-------------------|-----------------------------------------------------------------|----------------------|
+| BIND_ADDRESS      |                                                                 | 0.0.0.0:&lt;PORT&gt; |
+| PORT              |                                                                 | 8080                 |
+| RULES_PATH        | The file must exist if a value is set here.                     | rules.txt            |
+| S3_URL            | The AWS S3-compatible endpoint; this may include a path prefix. |                      |
+| S3_ACCOUNT_KEY    |                                                                 |                      |
+| S3_ACCOUNT_SECRET |                                                                 |                      |
+| S3_REGION         |                                                                 |                      |
 
 ### Rule-based authorization system
 

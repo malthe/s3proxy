@@ -21,6 +21,7 @@ const RULES_PATH: &str = "rules.txt";
 #[derive(Deserialize)]
 struct Config {
     bind_address: Option<String>,
+    port: Option<u16>,
     rules_path: Option<String>,
     s3_url: String,
     s3_account_key: String,
@@ -132,7 +133,7 @@ pub async fn main() -> R<()> {
     });
     let addr = match &config.bind_address {
         Some(s) => s.parse()?,
-        None => ([0, 0, 0, 0], PORT).into(),
+        None => ([0, 0, 0, 0], config.port.unwrap_or(PORT)).into(),
     };
     let server = Server::bind(&addr).serve(make_svc);
     info!("Listening on http://{}", addr);
