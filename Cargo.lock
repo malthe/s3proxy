@@ -280,6 +280,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "hyper-timeout"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbb958482e8c7be4bc3cf272a766a2b0bf1a6755e7a6ae777f017a31d11b13b1"
+dependencies = [
+ "hyper",
+ "pin-project-lite",
+ "tokio",
+ "tokio-io-timeout",
+]
+
+[[package]]
 name = "idna"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -570,7 +582,7 @@ dependencies = [
 
 [[package]]
 name = "s3proxy"
-version = "1.0.0"
+version = "1.0.1-dev"
 dependencies = [
  "anyhow",
  "aws-sign-v4",
@@ -579,6 +591,7 @@ dependencies = [
  "http",
  "hyper",
  "hyper-rustls",
+ "hyper-timeout",
  "log",
  "pretty_env_logger",
  "serde",
@@ -750,6 +763,16 @@ dependencies = [
  "socket2",
  "tokio-macros",
  "winapi",
+]
+
+[[package]]
+name = "tokio-io-timeout"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "30b74022ada614a1b4834de765f9bb43877f910cc8ce4be40e89042c9223a8bf"
+dependencies = [
+ "pin-project-lite",
+ "tokio",
 ]
 
 [[package]]

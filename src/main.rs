@@ -17,10 +17,16 @@ mod rules;
 const PORT: u16 = 8080;
 const POOL_TIMEOUT: u64 = 30;
 const RULES_PATH: &str = "rules.txt";
+const CONNECT_TIMEOUT: u64 = 1000;
+const READ_TIMEOUT: u64 = 5000;
+const WRITE_TIMEOUT: u64 = 5000;
 
 #[derive(Deserialize)]
 struct Config {
     bind_address: Option<String>,
+    connect_timeout: Option<u64>,
+    read_timeout: Option<u64>,
+    write_timeout: Option<u64>,
     port: Option<u16>,
     rules_path: Option<String>,
     s3_url: String,
@@ -80,7 +86,7 @@ pub async fn main() -> R<()> {
             let rules = parse_rules(f)?;
             info!("Parsed {} rule(s) from {}", rules.len(), rules_path);
             Some(rules)
-        },
+        }
         Err(e) => {
             if config.rules_path.is_some() {
                 return Err(anyhow!("{}: {}", e, rules_path));
@@ -99,6 +105,13 @@ pub async fn main() -> R<()> {
         .https_only()
         .enable_http1()
         .build();
+
+    let mut connector = hyper_timeout::TimeoutConnector::new(connector);
+    let get_timeout =
+        |config: Option<u64>, default: u64| Some(Duration::from_millis(config.unwrap_or(default)));
+    connector.set_connect_timeout(get_timeout(config.connect_timeout, CONNECT_TIMEOUT));
+    connector.set_read_timeout(get_timeout(config.read_timeout, READ_TIMEOUT));
+    connector.set_write_timeout(get_timeout(config.write_timeout, WRITE_TIMEOUT));
 
     let client = Client::builder()
         .pool_idle_timeout(Duration::from_secs(POOL_TIMEOUT))

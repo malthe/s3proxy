@@ -16,6 +16,9 @@ The service is configured using environment variables:
 | S3_ACCOUNT_KEY    |                                                                 |                      |
 | S3_ACCOUNT_SECRET |                                                                 |                      |
 | S3_REGION         |                                                                 |                      |
+| CONNECT_TIMEOUT   |                                                                 | 1000                 |
+| READ_TIMEOUT      |                                                                 | 5000                 |
+| WRITE_TIMEOUT     |                                                                 | 5000                 |
 
 ### Rule-based authorization system
 
