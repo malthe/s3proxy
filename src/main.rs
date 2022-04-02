@@ -124,7 +124,7 @@ pub async fn main() -> R<()> {
                 let client = client.clone();
 
                 async move {
-                    debug!("URL: {}", req.uri().to_string());
+                    debug!("{}: {}", req.method(), req.uri().to_string());
 
                     if let Some(rules) = rules {
                         if !(rules.iter().any(|r| r.check(&req))) {
