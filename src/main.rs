@@ -151,10 +151,19 @@ pub async fn main() -> R<()> {
                         warn!("Unable to sign request: {}", e);
                     });
 
-                    client.request(req).await.or_else(|err| {
-                        warn!("Error getting request: {}", err);
-                        Ok::<_, hyper::Error>(err_response(StatusCode::BAD_REQUEST))
-                    })
+                    client
+                        .request(req)
+                        .await
+                        .map(|resp| {
+                            if !resp.status().is_success() {
+                                debug!("Unexpected status code: {}", resp.status());
+                            }
+                            resp
+                        })
+                        .or_else(|err| {
+                            warn!("Error getting request: {}", err);
+                            Ok::<_, hyper::Error>(err_response(StatusCode::BAD_REQUEST))
+                        })
                 }
             }))
         }
