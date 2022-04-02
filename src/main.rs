@@ -37,7 +37,13 @@ struct Config {
 
 fn aws_sign_v4<B>(config: &Config, req: &mut Request<B>) -> R<()> {
     let parsed = url::Url::parse(&config.s3_url)?;
-    let url = format!("{}{}", config.s3_url, req.uri().path());
+    let url = format!(
+        "{}{}?{}",
+        config.s3_url,
+        req.uri().path(),
+        req.uri().query().unwrap_or("")
+    );
+    let url = url.strip_suffix("?").unwrap_or(&url);
     let datetime = chrono::Utc::now();
     let method = req.method().clone();
     let headers = req.headers_mut();
@@ -50,7 +56,7 @@ fn aws_sign_v4<B>(config: &Config, req: &mut Request<B>) -> R<()> {
     headers.insert("host", host);
     let s = aws_sign_v4::AwsSign::new(
         method.as_str(),
-        &url,
+        url,
         &datetime,
         &headers,
         &config.s3_region,
@@ -59,7 +65,7 @@ fn aws_sign_v4<B>(config: &Config, req: &mut Request<B>) -> R<()> {
     );
     let signature = s.sign();
     headers.insert("authorization", signature.parse()?);
-    *req.uri_mut() = http::Uri::from_str(&url)?;
+    *req.uri_mut() = http::Uri::from_str(url)?;
     Ok(())
 }
 
