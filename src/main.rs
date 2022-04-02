@@ -47,6 +47,15 @@ fn aws_sign_v4<B>(config: &Config, req: &mut Request<B>) -> R<()> {
     let datetime = chrono::Utc::now();
     let method = req.method().clone();
     let headers = req.headers_mut();
+    let content_type = headers.remove(http::header::CONTENT_TYPE);
+    let content_length = headers.remove(http::header::CONTENT_LENGTH);
+    headers.clear();
+    if let Some(content_type) = content_type {
+        headers.insert(http::header::CONTENT_TYPE, content_type);
+    }
+    if let Some(content_length) = content_length {
+        headers.insert(http::header::CONTENT_LENGTH, content_length);
+    }
     headers.insert(
         "X-Amz-Date",
         datetime.format("%Y%m%dT%H%M%SZ").to_string().parse()?,
