@@ -4,6 +4,7 @@ use std::str::FromStr;
 use std::time::Duration;
 
 use anyhow::{anyhow, Result as R};
+use http::header;
 use hyper::service::{make_service_fn, service_fn};
 use hyper::{Body, Client, Request, Response, Server, StatusCode};
 use hyper_rustls::HttpsConnectorBuilder;
@@ -20,6 +21,12 @@ const RULES_PATH: &str = "rules.txt";
 const CONNECT_TIMEOUT: u64 = 1000;
 const READ_TIMEOUT: u64 = 5000;
 const WRITE_TIMEOUT: u64 = 5000;
+const ALLOWED_HEADERS: &'static [header::HeaderName] = &[
+    header::CONTENT_LENGTH,
+    header::CONTENT_TYPE,
+    header::IF_MATCH,
+    header::RANGE,
+];
 
 #[derive(Deserialize)]
 struct Config {
@@ -47,15 +54,6 @@ fn aws_sign_v4<B>(config: &Config, req: &mut Request<B>) -> R<()> {
     let datetime = chrono::Utc::now();
     let method = req.method().clone();
     let headers = req.headers_mut();
-    let content_type = headers.remove(http::header::CONTENT_TYPE);
-    let content_length = headers.remove(http::header::CONTENT_LENGTH);
-    headers.clear();
-    if let Some(content_type) = content_type {
-        headers.insert(http::header::CONTENT_TYPE, content_type);
-    }
-    if let Some(content_length) = content_length {
-        headers.insert(http::header::CONTENT_LENGTH, content_length);
-    }
     headers.insert(
         "X-Amz-Date",
         datetime.format("%Y%m%dT%H%M%SZ").to_string().parse()?,
@@ -146,6 +144,23 @@ pub async fn main() -> R<()> {
                             return Ok::<_, hyper::Error>(err_response(StatusCode::UNAUTHORIZED));
                         }
                     }
+
+                    // Missing retain method makes sanitizing headers painful.
+                    let headers = req.headers_mut();
+                    let mut allowed: [Option<header::HeaderValue>; ALLOWED_HEADERS.len()] = Default::default();
+                    ALLOWED_HEADERS
+                        .iter()
+                        .zip(allowed.iter_mut())
+                        .for_each(|(k, v)| *v = headers.remove(k));
+                    headers.clear();
+                    ALLOWED_HEADERS
+                        .iter()
+                        .zip(allowed.iter_mut())
+                        .for_each(|(k, v)| {
+                            if let Some(v) = v {
+                                headers.insert(k, v.to_owned());
+                            }
+                        });
 
                     aws_sign_v4(config, &mut req).unwrap_or_else(|e| {
                         warn!("Unable to sign request: {}", e);
