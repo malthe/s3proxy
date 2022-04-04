@@ -582,7 +582,7 @@ dependencies = [
 
 [[package]]
 name = "s3proxy"
-version = "1.0.1-dev"
+version = "1.0.1"
 dependencies = [
  "anyhow",
  "aws-sign-v4",
