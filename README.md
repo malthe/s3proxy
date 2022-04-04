@@ -42,6 +42,8 @@ GET POST /images x-secret-key=123
 ```
 Note that the header name is case-insensitive while the value must be an exact match.
 
+If the path prefix ends with "$" then the match must be exact (without the "$" suffix).
+
 ### Use cases
 
 - The Linkerd service mesh supports [client identity](https://linkerd.io/2019/02/12/announcing-linkerd-2-2/) via the `l5d-client-id` header which can work as a simple authorization mechanism. Services can be set up with access to S3 with the exact privileges required without using IAM (which may not be desirable or supported) and/or complicated bucket policies.

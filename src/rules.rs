@@ -20,7 +20,14 @@ impl Rule {
             && (self
                 .paths
                 .iter()
-                .any(|path| req.uri().path().starts_with(path)))
+                .any(|path| {
+                    let p = req.uri().path();
+                    if let Some(path) = path.strip_suffix('$') {
+                        p == path
+                    } else {
+                        p.starts_with(path)
+                    }
+                }))
             && (self
                 .headers
                 .iter()
