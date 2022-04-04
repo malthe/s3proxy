@@ -17,3 +17,4 @@ pretty_env_logger = "0.4"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["full"] }
 url = "2"
+urlencoding = "2.1.0"

@@ -28,21 +28,22 @@ If a rules file is provided, only requests matching at least one rule will be pr
 
 The format of the rules file is plain text where each line is a rule. Each rule is a space-separated list of one or more tokens:
 
-| Name        | Token              |
-|-------------|--------------------|
-| HTTP method | `GET`              |
-| Path prefix | `/images`          |
-| Header      | `x-secret-key=123` |
-
-In each category, the request must match one of the tokens.
+| Name        | Token                         | Match  |
+|-------------|-------------------------------|--------|
+| HTTP method | `GET`                         | Any    |
+| Path prefix | `/images`                     | Any    |
+| Header      | `x-secret-key=123`            | All    |
+| Query       | `?list-type=2&prefix=images`  | Any    |
 
 Example:
 ```
 GET POST /images x-secret-key=123
 ```
-Note that the header name is case-insensitive while the value must be an exact match.
 
-If the path prefix ends with "$" then the match must be exact (without the "$" suffix).
+Notes:
+
+- Note that the header name is case-insensitive while the value must be an exact match.
+- If the path prefix ends with "$" then the match must be exact (without the "$" suffix).
 
 ### Use cases
 
